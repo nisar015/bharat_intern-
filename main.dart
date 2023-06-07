@@ -1,141 +1,185 @@
+// import 'dart:js_util';
+import 'package:calc_op/buttons.dart';
+// import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:math_expressions/math_expressions.dart';
+// import 'dart:ui' as ui;
+import 'package:audioplayers/audioplayers.dart';
+// import 'package:audioplayers/audio_cache.dart'; 
 
-void main() {
-  runApp(MaterialApp(
-    home: Home(),
-  )); // MaterialApp
+void main() => runApp(MyApp());
+// {
+//   runApp(const MyApp());
+// }
+
+class MyApp extends StatelessWidget {
+  // const MyApp({super.key});
+  //  final player=AudioCache();
+
+  
+  // const MyApp({super.key});// This widget is the root of your application.
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      debugShowCheckedModeBanner: false,
+      home: MyHomePage(),
+    );
+  }
 }
 
-class Home extends StatefulWidget {
+class MyHomePage extends StatefulWidget {
+ 
+  
   @override
-  _HomeState createState() => _HomeState();
+  State<MyHomePage> createState() => _MyHomePageState();
 }
 
-class _HomeState extends State<Home> {
-  TextEditingController temperatureController = TextEditingController();
-  String _infoText = "Converted Temperature";
-  String? _value = null;
-  List<String> _values = <String>[];
+class _MyHomePageState extends State<MyHomePage> {
 
-  void _resetFields() {
-    temperatureController.text = "";
-    setState(() {
-      _infoText = "Converted Temperature";
-    });
-  }
+var userquetion='';
+var useranswer='';
+var play;
+// final myTextStyle = TextStyle(fontSize: 40, color: Colors.cyan[700]);
 
-  @override
-  void initState() {
-    _values.addAll(['Kelvin', 'Fahrenheit']);
-    _value = _values.elementAt(0);
-  }
-
-  void _onChanged(String value) {
-    setState(() {
-      _value = value;
-    });
-  }
-
-  void converter() {
-    if (_value == 'Kelvin') {
-      setState(() {
-        _infoText = (double.parse(temperatureController.text) + 273).toStringAsPrecision(3);
-      });
-    }
-    if (_value == 'Fahrenheit') {
-      setState(() {
-        _infoText = ((double.parse(temperatureController.text) * 1.8) + 32).toStringAsPrecision(3);
-      });
-    }
-   
-  }
-
+final List<String> butto = 
+[
+ 'C','DEL','%','/',
+ '7','8','9','x',
+ '4','5','6','-',
+ '1','2','3','+',
+ '.','0','ANS','=',
+];
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(
-          title: Text("Temperature Converter"),
-          backgroundColor: Colors.purple[400],
-          centerTitle: true,
-          actions: <Widget>[
-            IconButton(
-              icon: Icon(Icons.refresh),
-              onPressed: _resetFields,
-            )
+      backgroundColor: Colors.indigo[100],
+      body:Column(
+          children: <Widget>[
+            Expanded(
+              child: Container(
+                child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  SizedBox(height: 50),
+                  Container(
+                    padding:EdgeInsets.all(15),
+                    alignment: Alignment.centerRight,
+                    child:Text(userquetion,style: TextStyle(fontSize:20),),
+                  ),
+                  Container(
+                    padding:EdgeInsets.all(15),
+                    alignment: Alignment.centerRight,
+                    child: Text(useranswer,style: TextStyle(fontSize:20 ),),
+                  )
+                ],
+              ),
+              ),
+              ),
+            
+            // ),
+            Expanded(
+              flex: 2,
+              child:Container(
+                // color: Colors.deepPurple[200],
+                // child: Center()
+                  child: GridView.builder(
+                    itemCount: butto.length,
+                    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 4), 
+                    itemBuilder: (BuildContext context,int index){
+                      if(index==0){
+                        return button( 
+                       buttonTapped: () {
+                        // final player=AudioPlayer()
+                        // player.play('music4.wav');
+                        setState(() {
+                          userquetion = '';
+                          useranswer = '';
+                        });
+                       },
+                       buttontext: butto[index],
+                       color: Colors.green,
+                       textcolor: Colors.white,
+                        );
+                      }
+                      else if(index==1){
+                       return button(
+                        buttonTapped: () {
+                          // final player=AudioCache();
+                         
+                          setState(() {
+                            userquetion = userquetion.substring(
+                              0, userquetion.length - 1);
+                            
+                            });
+
+                        },
+                      
+                       buttontext: butto[index],
+                       color: Colors.red,
+                       textcolor: Colors.white, 
+                        );
+                      }
+                       else if(index == butto.length-1){
+                        return button(
+                          buttonTapped: () {
+                          setState(() {
+                            equalpressed();
+                        
+                            });
+
+                        },
+                      
+                       buttontext: butto[index],
+                       color: Colors.blueGrey[700],
+                       textcolor: Colors.white, 
+                        );
+                       }
+                      else{
+                      return button(
+                        buttonTapped: (){ 
+                          // 0player.play('music4.wav');
+                          setState(() {
+                            userquetion += butto[index];
+                          });
+                        },
+                        buttontext: butto[index],
+                        color: isoperator(butto[index]) ? Colors.cyan[700]: Colors.purple[50],
+                        textcolor:isoperator(butto[index]) ? Colors.white : Colors.black,
+                      );
+                      }
+                  
+                  },
+                  ),
+                  // child: button(
+                  // color: Colors.black54,
+                  // textcolor: Colors.white,
+                  // buttontext: '0',
+                  // ),
+                ),
+              // child: Text('sadf'),
+              
+            ),
+              // ),
           ],
         ),
-        backgroundColor: Colors.deepPurple[100],
-        body: SingleChildScrollView(
-          padding: EdgeInsets.fromLTRB(40.0, 2.0, 40.0, 20.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: <Widget>[
-              Image.asset('assets/images/pngwing.com.png'),
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Container(
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  child: Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: TextField(
-                      keyboardType: TextInputType.number,
-                      decoration: InputDecoration(
-                        
-                         border: InputBorder.none,
-                    // borderRadius:BorderRadius.circular(12),
-                    hintText
-                    : 'Temperature(in celsius)',
-                    fillColor: Colors.grey[200],
-                    filled: true,
-                  ),
-                      
-                      controller: temperatureController,
-                    ),
-                  ),
-                ),
-              ),
-              SizedBox(
-                width: 200.0,
-                height: 50.0,
-              ),
-              SizedBox(
-                width: 75.0,
-                height: 50.0,
-                child: DropdownButton(
-                    value: _value,
-                    items: _values.map((String value) {
-                      return new DropdownMenuItem(
-                        value: value,
-                        child: new Text('${value}',
-                            style:
-                                TextStyle(color: Colors.black, fontSize: 25.0)),
-                      );
-                    }).toList(),
-                    onChanged: (String? value) {
-                      _onChanged(value!);
-                    }),
-              ),
-              Padding(
-                padding: EdgeInsets.fromLTRB(0.0, 50.0, 0.0, 30.0),
-                child: Container(
-                  height: 50.0,
-                  child: ElevatedButton(
-                    onPressed: () {
-                      converter();
-                    }, // faz conversao
-                    child: Text("CONVERT",
-                        style: TextStyle(color: Colors.white, fontSize: 20.0)),
-                   
-                  ),
-                ),
-              ),
-              Text(_infoText,
-                  textAlign: TextAlign.center,
-                  style: TextStyle(color: Colors.black, fontSize: 20.0)),
-            ],
-          ),
-        ));
+    );
   }
-}
+    bool isoperator(String x){
+      if(x=="+"|| x=="-"||x=="%"|| x=="/" || x=="x" || x=="="){
+        return true;
+      }
+      return false;
+    }
+
+    void equalpressed(){
+      String finalquestion=userquetion;
+      finalquestion = finalquestion.replaceAll('x', '*');
+
+      Parser p = Parser();
+      Expression exp = p.parse(finalquestion);
+      ContextModel cm = ContextModel();
+      double eval = exp.evaluate(EvaluationType.REAL, cm);
+
+      useranswer=eval.toString();
+    }
+  }
